@@ -3,15 +3,20 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.qieji.mobile.still.View.ZoomImageView
-        android:id="@+id/source_img_v"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="matrix" />
+    <!--<com.qieji.mobile.still.View.ZoomImageView-->
+        <!--android:id="@+id/source_img_v"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:scaleType="matrix" />-->
 
-    <com.qieji.mobile.still.View.ClipImageBorderView
-        android:id="@+id/clipImageBorder_v"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+    <!--<com.qieji.mobile.still.View.ClipImageBorderView-->
+        <!--android:id="@+id/clipImageBorder_v"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="fill_parent" />-->
+
+    <com.qieji.mobile.still.Widget.ClipImage
+        android:id="@+id/clipImageWidget"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

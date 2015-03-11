@@ -4,43 +4,32 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.AttributeSet;
-import android.util.TypedValue;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
+
+import com.qieji.mobile.still.Widget.ClipImage;
 
 /**
  * Created by August on 2015/2/27.
  * 图像截取遮罩框
  */
-public class ClipImageBorderView extends View {
+public class ClipImageBorderView extends View implements  ViewTreeObserver.OnGlobalLayoutListener {
 
-    // 遮罩框的水平padding（dp）
-    public int hPadding = 30;
-    // 遮罩框的垂直padding
-    public int vPadding;
-    public int borderWidth = 1;
-    // 遮罩框的宽高
-    public int width;
-    public int height;
+    Context mContext;
+    public Paint mPaint;
+    boolean bOnGlobalLayoutOnce = true;
+
+    RectF mMaskRect; // 遮罩的Rect
+    public int mBorderWidth = 1;
     public int borderColor = Color.parseColor("#FFFFFF");
     public int maskColor = Color.parseColor("#AA000000");
 
-    public Paint mPaint;
-
     public ClipImageBorderView(Context context) {
         super(context);
-        // dp转px
-        hPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, hPadding, getResources().getDisplayMetrics());
-        vPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, vPadding, getResources().getDisplayMetrics());
-        mPaint = new Paint();
-        mPaint.setAntiAlias(true);
-    }
-
-    public ClipImageBorderView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        // dp转px
-        hPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, hPadding, getResources().getDisplayMetrics());
-        vPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, vPadding, getResources().getDisplayMetrics());
+        mContext = context;
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
     }
@@ -48,19 +37,41 @@ public class ClipImageBorderView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        width = getWidth() - 2 * hPadding;
-        height = (width / 16) * 9;
-        vPadding = (getHeight() - height) / 2;
+        if (mMaskRect == null || mPaint == null) {
+            Log.w("asd", "dd");
+            return;
+        }
         mPaint.setColor(maskColor);
         mPaint.setStyle(Paint.Style.FILL);
-        // start to paint
-        canvas.drawRect(0, 0, hPadding, getHeight(), mPaint);
-        canvas.drawRect(getWidth() - hPadding, 0, getWidth(), getHeight(), mPaint);
-        canvas.drawRect(hPadding, 0, getWidth() - hPadding, vPadding, mPaint);
-        canvas.drawRect(hPadding, getHeight() - vPadding, getWidth() - hPadding, getHeight(), mPaint);
+        canvas.drawRect(0, 0, mMaskRect.left, getHeight(), mPaint);
+        canvas.drawRect(mMaskRect.right, 0, getWidth(), getHeight(), mPaint);
+        canvas.drawRect(mMaskRect.left, 0, mMaskRect.right, mMaskRect.top, mPaint);
+        canvas.drawRect(mMaskRect.left, mMaskRect.bottom, mMaskRect.right, getHeight(), mPaint);
         mPaint.setColor(borderColor);
-        mPaint.setStrokeWidth(borderWidth);
+        mPaint.setStrokeWidth(mBorderWidth);
         mPaint.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(hPadding, vPadding, getWidth() - hPadding, getHeight() - vPadding, mPaint);
+        canvas.drawRect(mMaskRect, mPaint);
     }
+
+    @Override
+    public void onGlobalLayout() {
+        if (bOnGlobalLayoutOnce) {
+            mMaskRect = ClipImage.getMaskRect(getHeight(), getWidth(), mContext);
+            bOnGlobalLayoutOnce = false;
+        }
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        getViewTreeObserver().addOnGlobalLayoutListener(this);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        getViewTreeObserver().removeGlobalOnLayoutListener(this);
+    }
+
 }

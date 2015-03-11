@@ -7,11 +7,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.qieji.mobile.still.R;
+import com.qieji.mobile.still.Widget.ClipImage;
 
 import java.io.File;
 
@@ -22,20 +20,18 @@ public class StageActivity extends Activity {
 
     public static final String ACTIVITY_TAG = "StageActivity";
 
-    protected ImageView sourceImgV;
     protected Bitmap sourceImgBM;
+    protected ClipImage clipImageWidget;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stage);
 
-        // init
-        sourceImgV = (ImageView) findViewById(R.id.source_img_v);
+        clipImageWidget = (ClipImage) findViewById(R.id.clipImageWidget);
 
         Intent i = getIntent();
         Uri uri = i.getData();
-        // Toast.makeText(this, uri + "", Toast.LENGTH_LONG).show();
         initSourceImgView(uri);
     }
 
@@ -61,7 +57,7 @@ public class StageActivity extends Activity {
                     sourceImgBM = Bitmap.createBitmap(sourceImgBM, 0, 0,
                             width, height, matrix, true);
                 }
-                sourceImgV.setImageBitmap(sourceImgBM);
+                clipImageWidget.setImageBitmap(sourceImgBM);
             }
         }
     }
